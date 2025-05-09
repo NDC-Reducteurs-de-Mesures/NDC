@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/traveestyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Choix_Travée</title>
+</head>
+<body> 
+    <header>
+        <a href="#"><img src="img/logo_0fae1bd2.svg" id="logo"></a>
+        <nav class="navigation">
+        </nav>
+    </header>
+
+    <main>
+        <div id="head">
+            <h1 id="titre">Choisir le type de travée</h1>
+        </div>
+        <div class="button-container">
+            <div class="row1">
+                <button class="depart-popup" onclick="choisirTravee('Départ')">Départ</button>
+                <button class="couplage-popup"  onclick="choisirTravee('Couplage')">Couplage</button>
+            </div>
+            <div class="row">
+                <button class="arrivee-popup"  onclick="choisirTravee('Arrivée Groupe')">Arrivée Groupe</button>
+                <button class="ligne-popup"  onclick="choisirTravee('Réactance Ligne')">Réactance Ligne</button>
+                <button class="barre-popup"  onclick="choisirTravee('Réactance Barre')">Réactance Barre</button>
+            </div>
+        </div>
+    </main>
+    <script>
+    function choisirTravee(travee) {
+        // Redirection vers la page relais.html avec le paramètre de la travée choisie
+        localStorage.setItem('traveeSelectionnee', travee);
+        
+         window.location.href = `choix.html?travee=${travee}        
+        `;
+    }
+    </script>
+</body>
+</html>

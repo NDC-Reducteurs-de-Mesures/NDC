@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/reducteurstyle.css">
+    <title>Choix Réducteur de mesure</title>
+</head>
+<body>
+    <h1 id="titre-reducteur">Choisir le type de réducteur de mesure</h1>
+    <div id="choix-reducteur">
+        <button onclick="choisirReducteur('inductif')">Transformateur de tension inductif</button>
+        <button onclick="choisirReducteur('capacitif')">Transformateur de tension capacitif</button>
+        <button onclick="choisirReducteur('courant')">Transformateur de courant</button>
+    </div>
+
+    <script>
+        // Récupérer le paramètre de la travée depuis l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const travee = urlParams.get('travee');
+
+        function choisirReducteur(reducteur) {
+            // Redirection vers la page de calcul avec les paramètres
+            window.location.href = `calcul.html?travee=${travee}&reducteur=${reducteur}`;
+        }
+    </script>
+</body>
+</html>

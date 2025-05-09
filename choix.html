@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/choixstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <title>Choix</title>
+</head>
+<body>
+    <header>
+        <a href="#"><img src="img/logo_0fae1bd2.svg" id="logo"></a>
+        <nav class="navigation">
+        </nav>
+    </header>
+
+    <main>
+        <div id="head">
+            <h1 id="titre">Choisir le type du  r&eacute;ducteur de mesure</h1>
+        </div>
+        <div class="button-container">
+
+            <button class="TCT-popup" onclick="choisirType('tct')">Transformateur de tension capacitif</button>
+            <button class="TIT-popup" onclick="choisirType('tit')">Transformateur de tension Inductif</button>
+            <button class="TC-popup" onclick="choisirType('tc')">Transformateur de courant</button>
+        </div>
+    </main>
+    <script>
+        function choisirType(type) {
+            localStorage.setItem('typeReducteur', type);
+            window.location.href = 'relais.html'; // Redirige vers la page du relais
+        }
+    </script>
+
+
+
+    <!-- <script>
+        // Récupérer le paramètre de l'URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const travee = urlParams.get('travee'); // "Départ", "Couplage", etc.
+
+        const buttonContainer = document.getElementById('button-container');
+
+        // En fonction de la travée choisie, ajuster les boutons
+        if (travee === 'Départ') {
+            buttonContainer.innerHTML = `
+                <button class="TCT-popup"><a href="tct.html">Transformateur de tension capacitif</a></button>
+                <button class="TIT-popup"><a href="tit.html">Transformateur de tension Inductif</a></button>
+                <button class="TC-popup"><a href="tc.html">Transformateur de courant</a></button>
+            `;
+        } else if (travee === 'Couplage') {
+            buttonContainer.innerHTML = `
+                <button class="TCT-popup"><a href="tct.html">Transformateur de tension capacitif</a></button>
+                <button class="TIT-popup"><a href="#">Transformateur de tension Inductif</a></button>
+                <button class="TC-popup">Transformateur de courant</button>
+            `;
+        } else if (travee === 'Arrivée Groupe') {
+            buttonContainer.innerHTML = `
+                <button class="TCT-popup"><a href="tct.html">Transformateur de tension capacitif</a></button>
+                <button class="TIT-popup"><a href="#">Transformateur de tension Inductif</a></button>
+                <button class="TC-popup">Transformateur de courant</button>
+            `;
+        } else if (travee === 'Réactance Ligne') {
+            buttonContainer.innerHTML = `
+                <button class="TCT-popup"><a href="tct.html">Transformateur de tension capacitif</a></button>
+                <button class="TIT-popup"><a href="#">Transformateur de tension Inductif</a></button>
+                <button class="TC-popup">Transformateur de courant</button>
+            `;
+        } else if (travee === 'Réactance Barre') {
+            buttonContainer.innerHTML = `
+                <button class="TCT-popup"><a href="tct.html">Transformateur de tension capacitif</a></button>
+                <button class="TIT-popup"><a href="#">Transformateur de tension Inductif</a></button>
+                <button class="TC-popup">Transformateur de courant</button>
+            `;
+        }
+
+
+        const params = new URLSearchParams(window.location.search);
+  const relais = params.get("relais");
+  if (relais) {
+    document.body.insertAdjacentHTML("afterbegin", `<h2>Relais sélectionné : ${relais}</h2>`);
+  }
+    </script> -->
+</body>
+
+</html>

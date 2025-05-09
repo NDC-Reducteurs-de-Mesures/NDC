@@ -1,0 +1,275 @@
+/* Style général du corps */
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+
+a {
+    text-decoration: none;
+    color: #000;
+}
+a:visited{
+    text-decoration: none;
+    color: #000;
+}
+
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+}
+
+#head {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding-left: 50px;
+    background-color: #222;
+    height: 80px;
+    padding: 20px;
+}
+
+#titre {
+    position: absolute;
+    color: #000;
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 200px;
+    margin-left: 48px;
+    margin-bottom: 10px;
+}
+
+/*form {
+    background-color: #f1f1f1; 
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
+}*/
+
+form {
+    background-color: #f1f1f1;
+    padding: 30px 40px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
+    max-width: 900px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 colonnes */
+    gap: 20px;
+    margin: 100px auto; /* Centrage horizontal */
+}
+
+/* Champ vide pour occuper la 12e case */
+.unit.empty {
+    visibility: hidden;
+}
+form button {
+    grid-column: span 1;
+    padding: 10px 20px;
+    font-size: 18px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 150px;
+}
+
+form button[type="button"] {
+    background-color: #4E95D9;
+    color: white;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+form button[type="reset"] {
+    background-color: #6c757d;
+    color: white;
+    border-radius: 8px;
+    padding: 12px 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+form button[type="button"]:hover {
+        transform: scale(1.05);
+    
+}
+form button[type="reset"]:hover {
+    transform: scale(1.05);
+}
+
+form button [type="button"]:active {
+    transform: scale(0.98);
+}
+
+#pdf-btn button [type="reset"]:active {
+    transform: scale(0.98);
+}
+
+/* Centrage horizontal des boutons */
+form .button-row {
+    grid-column: span 3;
+    display: flex;
+    justify-content: center; /* Centre les boutons */
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+form button {
+    width: 120px;
+    padding: 10px 0;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.unit {
+    display: flex;
+    flex-direction: column;
+}
+
+.unit label {
+    font-weight: 500;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.unit input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+.result-container {
+    grid-column: 1 / -1;
+    background-color: #e9f5ff;
+    border-left: 6px solid #4E95D9;
+    padding: 20px 30px;
+    border-radius: 12px;
+    font-size: 17px;
+    color: #222;
+    margin: 30px auto 0 auto;
+    max-width: 850px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 0.4s ease-in-out;
+}
+
+.result-container h2 {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    color: #004080;
+    text-align: center;
+    border-bottom: 2px solid #4E95D9;
+    padding-bottom: 8px;
+}
+
+.result-container p {
+    margin: 5px 0;
+    line-height: 1.6;
+}
+
+/* Apparition douce */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+
+
+#resultats {
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f9f9f9;
+    border-radius: 16px;
+    box-shadow: 0px 6px 20px rgba(0, 0, 0, 0.1);
+}
+
+#titre-resultat {
+    text-align: center;
+    font-size: 24px;
+    color: #2c6499;
+    margin-bottom: 20px;
+}
+
+#output {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 10px;
+}
+
+#output p {
+    flex: 1 1 calc(33% - 20px); /* 3 éléments par ligne, adaptatif */
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.05);
+    font-size: 15px;
+    color: #222;
+    font-weight: 500;
+    text-align: center;
+}
+
+
+#pdf-btn button {
+    background-color: #4E95D9; /* vert style "succès" */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 12px 24px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+#pdf-btn button:hover {
+    background-color: #4E95D9;
+    transform: scale(1.05);
+}
+
+#pdf-btn button:active {
+    transform: scale(0.98);
+}
+

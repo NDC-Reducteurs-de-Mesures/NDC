@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Choix Relais</title>
+    <link rel="stylesheet" href="style/relaisstyle.css">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    
+</head>
+
+<body>
+    <header>
+        <a href="#"><img src="img/logo_0fae1bd2.svg" id="logo"></a>
+    </header>
+
+    <div id="head">
+        <h1 id="titre">Sélectionner le relais de protection</h1>
+    </div>
+
+    <div class="relais-container">
+        <label for="relais">Relais de protection :</label>
+        <div class="dropdown">
+            <div class="dropdown-btn" id="dropdown-btn">--Choisir le relais--</div>
+            <div class="dropdown-content" id="dropdown-content">
+                <!-- Les marques seront injectées ici -->
+            </div>
+        </div>
+        <p id="puissanceRelais"></p>
+    </div>
+
+     <!-- <button class="toggle-ajout" onclick="toggleForm()">Ajouter un relais</button>  -->
+   
+
+
+    <div class="ajout-relais" id="form-ajout" style="display: none;">
+        <h2>Ajouter un relais à la travée : </h2>
+    
+        <div class="form-row">
+            <label for="marque">Marque :</label>
+            <input type="text" id="marque" placeholder="ex:GE ou Schneider">
+        </div>
+    
+        <div class="form-row">
+            <label for="nom">Nom du relais :</label>
+            <input type="text" id="nom" placeholder="ex: P743">
+        </div>
+    
+        <div class="form-row">
+            <label for="puissance">Puissance (VA) :</label>
+            <input type="number" id="puissance" placeholder="ex: 0.1">
+        </div>
+    
+        <button onclick="ajouterRelais()">Ajouter</button>
+    </div>
+    
+
+    <script>
+        const relaisParTravee = {
+            "Départ": [
+                { nom: "P743", puissance: 0.1, marque: "GE" },
+                { nom: "P444-1", puissance: 0.1, marque: "GE" },
+                { nom: "P444-2", puissance: 0.1, marque: "GE" },
+                { nom: "P546", puissance: 0.1, marque: "GE" },
+                { nom: "C264", puissance: 0.1, marque: "GE" }
+            ],
+            "Couplage": [
+                { nom: "P444", puissance: 0.1, marque: "GE" },
+                { nom: "P14x", puissance: 0.1, marque: "GE" },
+                { nom: "P743", puissance: 0.1, marque: "GE" }
+            ],
+            "Arrivée Groupe": [
+                { nom: "P743", puissance: 0.1, marque: "GE" },
+                { nom: "P14x", puissance: 0.1, marque: "GE" },
+                { nom: "P444", puissance: 0.1, marque: "GE" }
+            ],
+            "Réactance Ligne": [
+                { nom: "P743", puissance: 0.1, marque: "GE" },
+                { nom: "P444", puissance: 0.1, marque: "GE" },
+                { nom: "P14x", puissance: 0.1, marque: "GE" },
+                { nom: "P642", puissance: 0.1, marque: "GE" }
+            ],
+            "Réactance Barre": [
+                { nom: "P743", puissance: 0.1, marque: "GE" },
+                { nom: "P444", puissance: 0.1, marque: "GE" },
+                { nom: "P14x", puissance: 0.1, marque: "GE" },
+                { nom: "P642", puissance: 0.1, marque: "GE" }
+            ]
+        };
+
+        const dropdownContent = document.getElementById('dropdown-content');
+        const dropdownBtn = document.getElementById('dropdown-btn');
+        const travee = localStorage.getItem('traveeSelectionnee');
+        const puissanceAffichage = document.getElementById('puissanceRelais');
+        // document.getElementById("nom-travee").textContent = travee;
+
+        function renderRelaisPourTravee(travee) {
+            dropdownContent.innerHTML = ""; // Vider avant de re-remplir
+            const tout = [...(relaisParTravee[travee] || [])];
+
+            const ajouts = JSON.parse(localStorage.getItem('ajoutsParTravee') || '{}');
+            if (ajouts[travee]) tout.push(...ajouts[travee]);
+
+            const marques = {};
+            tout.forEach(r => {
+                if (!marques[r.marque]) marques[r.marque] = [];
+                marques[r.marque].push(r);
+            });
+
+            Object.entries(marques).forEach(([marque, relais]) => {
+                const container = document.createElement('div');
+                container.className = 'dropdown-option';
+                container.textContent = marque;
+
+                const sub = document.createElement('div');
+                sub.className = 'sub-options';
+
+                relais.forEach(({ nom, puissance }) => {
+                    const item = document.createElement('div');
+                    item.textContent = nom;
+                    item.onclick = () => selectRelais(`${marque} ${nom}`, puissance);
+                    sub.appendChild(item);
+                });
+
+                container.appendChild(sub);
+                dropdownContent.appendChild(container);
+            });
+
+// Ajouter l'option "Ajouter un relais"
+const ajouterOption = document.createElement('div');
+ajouterOption.className = 'dropdown-option';
+ajouterOption.textContent = "Ajouter un relais";
+ajouterOption.style.color = '#000'; // facultatif : mettre en bleu par exemple
+ajouterOption.style.fontWeight = 'bold'; // style facultatif
+ajouterOption.onclick = toggleForm;
+
+dropdownContent.appendChild(ajouterOption);
+
+
+
+
+        }
+
+
+        function selectRelais(nom, puissance) {
+            localStorage.setItem('relaisNom', nom);
+            localStorage.setItem('Srelais', puissance);
+
+            const typeReducteur = localStorage.getItem('typeReducteur');
+            if (typeReducteur === 'tct') {
+                window.location.href = 'tct.html';
+            } else if (typeReducteur === 'tit') {
+                window.location.href = 'tit.html';
+            } else if (typeReducteur === 'tc') {
+                window.location.href = 'tc.html';
+            } else {
+                alert('Erreur : aucun type de réducteur sélectionné.');
+            }
+        }
+
+
+        const puissanceRelais = localStorage.getItem('puissanceRelais');
+console.log("Puissance relais sélectionné :", puissanceRelais);
+
+const nomRelais = localStorage.getItem('relaisNom');
+
+        function ajouterRelais() {
+            const marque = document.getElementById('marque').value.trim();
+            const nom = document.getElementById('nom').value.trim();
+            const puissance = parseFloat(document.getElementById('puissance').value);
+
+            if (!marque || !nom || isNaN(puissance)) {
+                alert("Veuillez remplir tous les champs.");
+                return;
+            }
+
+            const nouveau = { nom, puissance, marque };
+
+            // Ajouter au localStorage
+            const ajouts = JSON.parse(localStorage.getItem('ajoutsParTravee') || '{}');
+            if (!ajouts[travee]) ajouts[travee] = [];
+            ajouts[travee].push(nouveau);
+            localStorage.setItem('ajoutsParTravee', JSON.stringify(ajouts));
+
+            // Re-afficher
+            renderRelaisPourTravee(travee);
+
+            // Vider les champs
+            document.getElementById('marque').value = '';
+            document.getElementById('nom').value = '';
+            document.getElementById('puissance').value = '';
+            alert("Relais ajouté !");
+        }
+
+        // function toggleForm() {
+        //     const form = document.getElementById('form-ajout');
+        //     form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        // }
+
+        function toggleForm() {
+    const form = document.getElementById('form-ajout');
+
+    // Vérifie que le formulaire est déjà visible
+    if (form.style.display !== 'none') {
+        // Décalage pour compenser le header (ajuste à ta convenance)
+        const offset = -120;
+        const y = form.getBoundingClientRect().top + window.scrollY + offset;
+
+        // Scroll fluide vers le formulaire
+        window.scrollTo({ top: y, behavior: 'smooth' });
+    } else {
+        // Si jamais le formulaire est masqué, on l'affiche quand même
+        form.style.display = 'block';
+
+        // Puis on scroll vers lui
+        setTimeout(() => {
+            const offset = -120;
+            const y = form.getBoundingClientRect().top + window.scrollY + offset;
+            window.scrollTo({ top: y, behavior: 'smooth' });
+        }, 100);
+    }
+
+    // Ferme la dropdown après le clic
+    dropdownContent.style.display = 'none';
+}
+
+        dropdownBtn.addEventListener('click', () => {
+            dropdownContent.style.display = (dropdownContent.style.display === 'block') ? 'none' : 'block';
+        });
+
+        window.addEventListener('click', function(event) {
+            if (!event.target.closest('.dropdown')) {
+                dropdownContent.style.display = 'none';
+            }
+        });
+
+        // Init affichage
+        renderRelaisPourTravee(travee);
+        
+    </script>
+
+
+</body>
+</html>
