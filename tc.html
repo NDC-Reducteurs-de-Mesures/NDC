@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TCT</title>
+    <link rel="stylesheet" href="style/tcstyle.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=DejaVu+Sans&display=swap" rel="stylesheet">
+
+    <!-- Inclure jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+
+</head>
+<body>
+    <header>
+        <a href="#"><img src="img/logo_0fae1bd2.svg" id="logo"></a>
+        <nav class="navigation"></nav>
+    </header>
+
+    <main>
+        <div id="head">
+            <h1 id="titre">Saisir les paramètres de calcul</h1>
+        </div>
+
+        <form method="post">
+            <div class="unit"><label for="ip">Ip (A)</label><input required type="text" name="Ip" id="ip"></div>
+            <div class="unit"><label for="is">Is (A)</label><input required type="text" name="Is" id="is"></div>
+            <div class="unit"><label for="ipsc">Ipsc (A)</label><input required type="text" name="Ipsc" id="ipsc"></div>
+            <div class="unit"><label for="fr">fr (Hz)</label><input required type="text" name="fr" id="fr"></div>
+            <div class="unit"><label for="tprim">t' (ms)</label><input required type="text" name="tprim" id="tprim"></div>
+            <div class="unit"><label for="tsec">t'' (ms)</label><input required type="text" name="tsec" id="tsec"></div>
+            <div class="unit"><label for="tfr">tfr (ms)</label><input required type="text" name="tfr" id="tfr"></div>
+            <div class="unit"><label for="tp">Tp (ms)</label><input required type="text" name="Tp" id="tp"></div>
+            <div class="unit"><label for="ts">Ts (s)</label><input required type="text" name="Ts" id="ts"></div>
+            <div class="unit"><label for="rb">Rb (Ω)</label><input required type="text" name="Rb" id="rb"></div>
+            <div class="unit"><label for="rct">Rct (Ω)</label><input required type="text" name="Rct" id="rct"></div>
+            <div class="unit">
+                <label for="srelais">Srelais (VA)</label>
+                <input type="text" name="Srelais" id="srelais" readonly>
+            </div>
+            <div class="unit"><label for="ro">ρ (Ω.mm²/m)</label><input required type="text" name="ro" id="ro"></div>
+            <div class="unit"><label for="s">S (m²)</label><input required type="text" name="S" id="s"></div>
+            <div class="unit"><label for="l">l(m)</label><input required type="text" name="l" id="l"></div>
+            <div class="unit"><label for="ALF">ALF</label><input required type="text" name="ALF" id="ALF"></div>
+
+            <div class="unit empty"></div>
+
+            <div class="button-row">
+                <button type="button" onclick="fun1()">Calculer</button>
+                <button type="reset">Réinitialiser</button>
+            </div>
+        </form>
+
+        <!--<label for="c1">C1</label>
+        <input type="text" id="c1" placeholder="Ex: 4.32e-12" /><br/>
+        
+        <label for="c2">C2</label>
+        <input type="text" id="c2" placeholder="Ex: 72.75e-12" /><br/>-->
+
+        <div id="resultats" class="result-container" style="display: none;">
+            <h2 id="titre-resultat" style="display: none;">Résultats</h2>
+            <div id="output" style="color: black;"></div>
+            <div id="pdf-btn" style="text-align: center; margin-top: 20px; display: none;">
+                <button onclick="telechargerPDF()">📄 Télécharger PDF</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+
+/*
+function parseInput(value) {
+    // Remplacer la virgule par un point
+    value = value.replace(',', '.');
+    try {
+        // Évaluer l'expression mathématique
+        return eval(value);
+    } catch (e) {
+        console.error('Erreur d\'expression:', e);
+        return NaN;
+    }
+}
+
+*/
+
+
+
+        function writeTextWithPageBreak(doc, text, x, yStart, lineHeight = 10, maxWidth = 180) {
+  const pageHeight = 297; // Hauteur d'une page A4 en mm
+  const bottomMargin = 20;
+  let y = yStart;
+
+  const lines = doc.splitTextToSize(text, maxWidth);
+
+  lines.forEach(line => {
+    if (y + lineHeight > pageHeight - bottomMargin) {
+      doc.addPage();
+      y = 20;
+    }
+
+    doc.text(line, x, y);
+    y += lineHeight;
+  });
+
+  return y;
+}
+
+    // Charger la valeur de Srelais depuis le localStorage si elle existe
+    window.addEventListener("DOMContentLoaded", () => {
+        const valeurSrelais = localStorage.getItem("Srelais");
+        if (valeurSrelais) {
+            document.getElementById("srelais").value = valeurSrelais;  // Remplir le champ Srelais
+        } else {
+            alert("Aucun relais sélectionné. Veuillez revenir à la page précédente.");
+        }
+    });
+
+
+ //   let Rf, I, Sdis, Sg, Usr, Δu, εf, Srelais;
+ 
+    function fun1() {
+        const champs = [
+            { id: "ip", nom: "Ip" },
+            { id: "is", nom: "Is" },
+            { id: "ipsc", nom: "Ipsc" },
+            { id: "fr", nom: "fr" },
+            { id: "tprim", nom: "tprim" },
+            { id: "tsec", nom: "tsec" },
+            { id: "tfr", nom: "tfr" },
+            { id: "tp", nom: "Tp" },
+            { id: "ts", nom: "Ts" },
+            { id: "rb", nom: "Rb" },
+            { id: "rct", nom: "Rct" },
+            { id: "srelais", nom: "Srelais" },
+            { id: "l", nom: "L" },
+            { id: "ro", nom: "ρ" },
+            { id: "s", nom: "S" },
+            {id:"ALF", nom: "ALF"}
+        ];
+
+        let formulaireValide = true;
+
+        champs.forEach(champ => {
+            const input = document.getElementById(champ.id);
+            const valeur = input.value.trim();
+            if (valeur === "" || isNaN(parseFloat(valeur))) {
+                input.setCustomValidity(`Veuillez entrer une valeur numérique pour ${champ.nom}`);
+                formulaireValide = false;
+            } else {
+                input.setCustomValidity("");
+            }
+        });
+
+        const form = document.querySelector("form");
+        
+
+        if (!formulaireValide) {
+            // Ceci force TOUS les messages personnalisés à s'afficher
+            form.reportValidity();
+            return;
+        }
+
+        document.querySelector("form").addEventListener("reset", (e) => {
+    setTimeout(() => {
+        const valeurSrelais = localStorage.getItem("Srelais");
+        if (valeurSrelais) {
+            document.getElementById("srelais").value = valeurSrelais;
+        }
+    }, 0);
+});
+
+        // --- Calculs ---
+        const   Ip = parseFloat(document.getElementById("ip").value);
+        const Is = parseFloat(document.getElementById("is").value);
+        const Ipsc= parseFloat(document.getElementById("ipsc").value);
+        const fr = parseFloat(document.getElementById("fr").value);
+        const t = parseFloat(document.getElementById("tprim").value);
+        const tt = parseFloat(document.getElementById("tsec").value);
+        const tfr = parseFloat(document.getElementById("tfr").value);
+        const Tp = parseFloat(document.getElementById("tp").value);
+        const Ts = parseFloat(document.getElementById("ts").value);
+        const Rb = parseFloat(document.getElementById("rb").value);       
+        const Rct = parseFloat(document.getElementById("rct").value);
+        const Srelais = parseFloat(document.getElementById("srelais").value);
+        const L_m = parseFloat(document.getElementById("l").value);
+        const ro = parseFloat(document.getElementById("ro").value);
+        const S_m2 = parseFloat(document.getElementById("s").value);
+        const ALF = parseFloat(document.getElementById("ALF").value);
+
+        const sqrt3 = Math.sqrt(3);
+        const pi = Math.PI;
+
+
+
+        
+
+        let W = 2 * Math.PI * parseFloat(document.getElementById('fr').value); // fr en Hz
+
+    // Vérifier que Ts ≠ Tp pour éviter la division par zéro
+    /*
+    if (Ts === Tp) {
+        document.getElementById('result').innerText = "Erreur : Ts et Tp ne doivent pas être égaux.";
+        return;
+    }
+*/
+    // Calculs
+    let facteur = (W * Tp * Ts) / (Ts - Tp);
+    let exp1 = Math.exp(Tp / Ts);
+    let exp2 = Math.exp(Tp / Tp);
+    let exp3 = Math.exp(-(Tp + Ts) / Ts);
+
+        const Kr = Ip / Is;
+        const εi = ((Kr * Is - Ip) / Ip) * 100;
+        const Kssc = Ipsc / Ip;
+        const Ktd = (facteur * (exp1 - exp2) + 1) * exp3 + (facteur * (exp1 - exp2 + 1));
+        // const Ktd = (((2*pi*fr*Tp*Ts)/(Ts-Tp))*(Math.exp(-t/Ts)-Math.exp(-t/Tp))+1)*Math.exp(-(tfr+tt)/Ts)+((2*pi*fr*Tp*Ts)/(Ts-Tp))*(Math.exp(-t/Ts)-Math.exp(-t/Tp))+1;
+        const Rf = (ro * 2 * L_m) / S_m2;
+        const Rs = Rb + Rct + Rf ;
+        const Eal = Is * Ktd * Rs * Kssc ;
+        const Sp = ((Eal/ALF) - Rct )* Math.pow(Is, 2);
+        const Sm = (Rb + Rct + Rf)* Math.pow(Is, 2);
+    
+        if (Ts === Tp || Ts === 0 || Tp === 0 || isNaN(Ts) || isNaN(Tp)) {
+    alert("Erreur : Tp et Ts doivent être différents de 0 et de l’un l’autre !");
+    return;
+}
+
+        const resultBox = document.getElementById("resultats");
+        const titreResultat = document.getElementById("titre-resultat");
+        const output = document.getElementById("output");
+
+        resultBox.style.display = "block";
+        titreResultat.style.display = "block";
+
+        document.getElementById("pdf-btn").style.display = "block";
+  
+        output.innerHTML = `
+            <p>Kr = ${Kr.toExponential(5)}</p>
+            <p>εi = ${εi.toExponential(5)} %</p>
+            <p>Kssc =${Kssc.toExponential(5)}</p>
+            <p>Ktd = ${Ktd.toExponential(5)}</p>
+            <p>Rf = ${Rf.toExponential(5)} Ω</p>
+            <p>Rs = ${Rs.toExponential(5)}</p>
+            <p>Eal = ${Eal.toExponential(5)} V</p>
+            <p>Sp = ${Sp.toExponential(5)} VA</p>
+            <p>Sm = ${Sm.toExponential(5)} VA</p>
+        `;
+        
+
+
+        resultBox.scrollIntoView({ behavior: "smooth", block: "center" });
+        window.resultatsFormates = [
+        ['Kr', Kr.toExponential(5)],
+        ['Epsilon i (%)', εi.toExponential(5)],
+        ['Kssc', Kssc.toExponential(5)],
+        ['Ktd', Ktd.toExponential(5)],
+        ['Rf (Ohm)', Rf.toExponential(5)],
+        ['Rs (Ohm)', Rs.toExponential(5)],
+        ['Eal (V)', Eal.toExponential(5)],
+        ['Sp (VA)', Sp.toExponential(5)],
+        ['Sm (VA)', Sm.toExponential(5)]]
+
+    };
+
+async function telechargerPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    function evaluerEtFormater(valeur) {
+        try {
+            const resultat = eval(valeur.replace(',', '.'));
+            if (isNaN(resultat)) return valeur; // En cas d'erreur
+            return parseFloat(resultat).toFixed(2);
+        } catch (e) {
+            return valeur; // Si évaluation impossible, on garde la valeur brute
+        }
+    } 
+          
+    const Ip = parseFloat(document.getElementById("ip").value);
+    const Is = parseFloat(document.getElementById("is").value);
+    const Ipsc =parseFloat(document.getElementById("ipsc").value);
+    const fr = parseFloat(document.getElementById("fr").value);
+    const t = parseFloat(document.getElementById("tprim").value);
+    const tt = parseFloat(document.getElementById("tsec").value);
+    const tfr = parseFloat(document.getElementById("tfr").value);
+    const Tp = parseFloat(document.getElementById("tp").value);
+    const Ts = parseFloat(document.getElementById("ts").value);
+    const Rb = parseFloat(document.getElementById("rb").value);
+    const Rct = parseFloat(document.getElementById("rct").value);
+    const Srelais = parseFloat(document.getElementById("srelais").value);
+    const L_m = parseFloat(document.getElementById("l").value);
+    const ro = parseFloat(document.getElementById("ro").value);
+    const S_m2 = parseFloat(document.getElementById("s").value);
+    const ALF = parseFloat(document.getElementById("ALF").value);
+
+    
+    const sqrt3 = Math.sqrt(3);
+    const pi = Math.PI;
+
+    
+    let W = 2 * Math.PI * parseFloat(document.getElementById('fr').value); // fr en Hz
+
+    let facteur = (W * Tp * Ts) / (Ts - Tp);
+    let exp1 = Math.exp(Tp / Ts);
+    let exp2 = Math.exp(Tp / Tp);
+    let exp3 = Math.exp(-(Tp + Ts) / Ts);
+
+    const Kr = Ip / Is;
+        const εi = ((Kr * Is - Ip) / Ip) * 100;
+        const Kssc = Ipsc / Ip;
+        const Ktd = (facteur * (exp1 - exp2) + 1) * exp3 + (facteur * (exp1 - exp2 + 1));
+        // const Ktd = (((2*pi*fr*Tp*Ts)/(Ts-Tp))*(Math.exp(-t/Ts)-Math.exp(-t/Tp))+1)*Math.exp(-(tfr+tt)/Ts)+((2*pi*fr*Tp*Ts)/(Ts-Tp))*(Math.exp(-t/Ts)-Math.exp(-t/Tp))+1;
+        const Rf = (ro * 2 * L_m) / S_m2;
+        const Rs = Rb + Rct + Rf ;
+        const Eal = Is * Ktd * Rs * Kssc ;
+        const Sp = ((Eal/ALF) - Rct )* Math.pow(Is, 2);
+        const Sm = (Rb + Rct + Rf)* Math.pow(Is, 2);
+    
+    
+
+    //let y = 20;
+
+    function writeTextAuto(text) {
+        const pageHeight = doc.internal.pageSize.height;
+        const lines = doc.splitTextToSize(text, 180);
+        lines.forEach(line => {
+            doc.text(line, 10, y);
+            y += 8;
+            if (y > pageHeight - 20) {
+                doc.addPage();
+                y = 20;
+            }
+        });
+    }
+    let y = 20; // Position de départ verticale
+const xLabel = 20; // Position X des labels
+const xValue = 100; // Position X des valeurs (aligné proprement)
+const zvalue = 30;
+const uvalue = 120;
+const yvalue = 60;
+const evalue = 70;
+
+
+doc.setFont("times", "bold");
+doc.setFontSize(12);
+doc.text("CARACTERISTIQUES DU RESEAU :", xLabel, y);
+y += 10;
+
+doc.setFont("times", "normal");
+doc.setFontSize(10);
+
+doc.text("Courant primaire", xLabel, y);
+doc.text(`= ${Ip} A`, xValue, y);
+y += 7;
+
+doc.text("Courant secondiare", xLabel, y);
+doc.text(`= ${Is} A`, xValue, y);
+y += 7;
+
+doc.text("Courant primaire de court-circuit ", xLabel, y);
+doc.text(`= ${Ipsc} A`, xValue, y);
+y += 7;
+
+doc.text("Fréquence nominal	", xLabel, y);
+doc.text(`= ${fr} Hz`, xValue, y);
+y += 10;
+
+
+/*
+${Kr.toExponential(5)}</p>
+ ${εi.toExponential(5)} %</p>
+ ${Kssc.toExponential(5)}
+ ${Ktd.toExponential(5)}</p>
+${Rf.toExponential(5)} Ω</p>
+ ${Rs.toFixed(5)}</p>
+ ${Eal.toExponential(5)} V</p>
+ ${Sp.toFixed(5)} VA</p>
+ ${Sm.toFixed(5)}
+
+
+
+
+${Ip}  ${Is}  ${Ipsc} ${fr}  ${t} ${tt}  ${tfr}  ${Tp} ${Ts}  ${Rb} ${Rct} ${Srelais}  ${L_m} ${ro}  ${S_m2}  ${Kssc}  ${ALF} 
+
+
+
+
+
+
+
+*/
+
+
+
+
+
+doc.setFont("times", "bold");
+doc.setFontSize(12);
+
+doc.text("Note de calcul du Transformateur de Courant :", xLabel, y);
+y += 10;
+
+doc.setFont("times", "normal");
+doc.setFontSize(10);
+
+doc.text("Rapport de transformation : ", xLabel, y);
+y += 7;
+doc.text("Kr", yvalue,y);
+doc.text("= Courant primaire / Courant secondiare", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Ip} / ${Is}`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Kr.toExponential(5)}`, evalue, y);
+y += 10;
+
+doc.text("Erreur du rapport de Tension  :", xLabel, y);
+y += 7;
+doc.text("Eps(i)", yvalue,y);
+doc.text("= [ ( Kr *  Is - Ip ) / Ip ] * 100", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= [ ( ${Kr.toExponential(5)} *  ${Is} - ${Ip} ) / ${Is} ] * 100`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${εi.toExponential(5)} %`,  evalue, y);
+y += 10;
+
+
+doc.text("Facteur de courant de court-circuit :", xLabel, y);
+y += 7;
+doc.text("Kssc", yvalue, y);
+doc.text("= Courant primaire de court-circuit  / Courant primaire assignée",  evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Ipsc} / ${Ip}`,  evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Kssc.toExponential(5)}`,  evalue, y);
+y += 10;
+
+
+
+
+
+doc.text("Facteur de dimensionnement pour le régime transitoire  :", xLabel, y);
+y += 7;
+doc.addImage('img/ktd.png', 'PNG', xLabel, y, 150, 15); // x, y, largeur, hauteur
+y += 20;
+
+
+
+doc.text("Avec:", zvalue, y);
+y += 7;
+doc.text("Tp : Constante de temps primaire", zvalue, y);
+doc.text(`= ${Tp.toExponential(5)} ms`, uvalue,y);
+y += 7;
+doc.text("Ts : Constate de temps secondaire", zvalue, y);
+doc.text(`= ${Ts.toExponential(5)} s`, uvalue,y);
+y += 7;
+doc.text("Cycle de fonctionnement ", zvalue, y);
+doc.text(`t'= ${t} ms , t''= ${tt} ms , tfr = ${tfr} ms`, uvalue,y);
+y += 7;
+doc.text("Ktd", yvalue, y);
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${Ktd.toExponential(5)}`,  evalue, y);
+y += 10;
+
+
+
+doc.text("Resistance de la boucle de filerie :", xLabel, y);
+y += 7;
+doc.text("Rf", yvalue, y);
+doc.text("= Résistivité de cuivre * [(2 * Distance entre TC et relais) / Section du câble ]", evalue,y);
+y += 7;
+doc.text("= rho * [(2 * l) / S ]", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${ro}  * [(2 * ${L_m} ) / ${S_m2} ] `, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Rf.toExponential(5)} Ohm`, evalue, y);
+y += 10;
+
+
+const texte = `
+
+
+`;
+writeTextAuto(texte);
+
+
+
+doc.text("Résistance de la boucle secondaire :", xLabel, y);
+y += 7;
+doc.text("Rs", yvalue, y);
+doc.text("= Rb + Rct + Rf",  evalue,y);
+y += 7;
+doc.text("Avec:", zvalue, y);
+y += 7;
+doc.text("Rb : Charge résistive connecté aux bornes secondiares ", zvalue, y);
+doc.text(`= ${Rb} Ohm`, uvalue,y);
+y += 7;
+doc.text("Rct : Résistance de courant continu de l'enroulement secondaire", zvalue, y);
+doc.text(`= ${Rct} Ohm`, uvalue,y);
+y += 7;
+doc.text("Rs", yvalue, y);
+doc.text(`= ${Rb}+ ${Rct} + ${Rf.toExponential(5)}`,  evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Rs.toFixed(5)} ohm`,  evalue, y);
+y += 10;
+
+
+doc.text("Force électromotrice secondaire limite  :", xLabel, y);
+y += 7;
+doc.text("Eal", yvalue, y);
+doc.text(`= ${Kssc.toExponential(4)} * ${Ktd.toExponential(4)} * ${Rs.toExponential(4)} * ${Is.toExponential(4)}`,  evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Eal.toExponential(5)} V`,  evalue, y);
+y += 10;
+
+
+
+
+
+
+doc.text("Puissance de precision pour protection :", xLabel, y);
+y += 7;
+doc.text("Sp", yvalue,y);
+doc.text("= [( Eal / (ALF * Is)) - Rct] * (Isn^2)", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= [( ${Eal.toExponential(5)} / (${ALF}  * ${Is})) - ${Rct}] * (${Is}^2)`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${Sp.toFixed(5)} VA`,  evalue, y);
+y += 10;
+
+
+doc.text("Puissance de precision pour mesure :", xLabel, y);
+y += 7;
+doc.text("Sm", yvalue,y);
+doc.text("= (Rb + Rct + Rf) * (Isn^2)", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ( ${Rb.toExponential(4)} + ${Rct.toExponential(4)} + ${Rf.toExponential(5)}) * (${Is.toExponential(4)}^2)`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=   ${Sm.toExponential(4)} VA`,  evalue, y);
+y += 10;
+
+
+
+
+/*
+
+doc.text("Rapport de tension :", xLabel, y);
+y += 7;
+doc.text("Kc", yvalue, y);
+doc.text("= ( C1 +  C2 ) / C1 ", evalue,y);
+y += 7;
+
+doc.text("Avec:", zvalue, y);
+y += 7;
+doc.text("C1  capacités des condensateurs à haute tension", zvalue, y);
+doc.text(`= ${C1} F`, uvalue,y);
+y += 7;
+doc.text("C2 capacités des condensateurs à tension intermédiaire", zvalue, y);
+doc.text(`= ${C2} F`, uvalue,y);
+y += 7;
+doc.text("Kc", yvalue, y);
+doc.text(`= ( ${C1} + ${C2} ) / ${C1} `, evalue,y);
+y += 7;
+doc.text(`= ${Kc.toFixed(4)} F`, evalue,y);
+y += 10;
+
+
+
+doc.text("Inductance compensatrice :", xLabel, y);
+y += 7;
+doc.text("L", yvalue, y);
+doc.text("= 1 / ( ( C1 + C2 ) * (2pi*fr)^2)", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= 1 / ( ( ${C1} + ${C2} ) * (2pi * ${fr})^2)`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${L.toExponential(4)} H`, evalue, y);
+y += 10;
+
+
+    const texte = `
+`;
+writeTextAuto(texte);
+/*
+    Tension primaire assignée : , 
+    Usr   = Tension primaire/sqrt(3), 
+
+${Up}                 ${Upr.toFixed(4)}
+${Us}                   ${Usr.toFixed(4)}
+${C1}                    ${Kr.toFixed(4)}
+${C2}                    ${εu.toFixed(4)}
+${fr}                    ${Kc.toFixed(4)}
+${U_au_choc}                     ${L.toExponential(4)} 
+${Imax}                     ${Uchoc.toFixed(4)}
+${Srelais}                     ${Ucd.toFixed(4)} 
+${L_m}                     ${Sth.toFixed(4)} 
+${ro}                     ${I.toFixed(4)} 
+${S_m2}                     ${Rf.toFixed(4)} 
+${Ireseau}                          ${Sdis.toFixed(4)} 
+                    ${Sg.toFixed(4)}
+                    ${Δu.toFixed(4)} 
+                    ${εf.toFixed(4)} 
+
+`;
+*//*
+doc.text("La tension de tenue assignée au choc de foudre :", xLabel, y);
+y += 7;
+doc.text("Uchoc", yvalue, y);
+doc.text("= Tension au choc d’essai du TCT *(C1/(C1+C2))", evalue,y);
+y += 7;
+doc.text("= U au choc * (C1/(C1+C2))", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${U_au_choc} *(${C1}/(${C1}+${C2}))`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Uchoc.toFixed(4)} V`, evalue, y);
+y += 10;
+
+
+
+    
+
+doc.text("La tension de tenue assignée de courte durée :", xLabel, y);
+y += 7;
+doc.text("Ucd ", yvalue, y);
+doc.text("= Tension primaire assignée * 3.3 * (C1 / (C1+C2))", evalue,y);
+y += 7;
+doc.text("= Upr * 3.3 * (C1 / (C1+C2))", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Upr.toFixed(4)} * 3.3 * (${C1} / (${C1}+${C2}))`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${Ucd.toFixed(4)}  V`, evalue, y);
+y += 10;
+
+
+
+doc.text("La puissance thermique limite :", xLabel, y);
+y += 7;
+doc.text("Sth", yvalue, y);
+doc.text("= Tension secondaire assignée * Courant maximal", evalue,y);
+y += 7;
+doc.text("= Usr * Imax", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Usr.toFixed(4)} * ${Imax} `, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${Sth.toFixed(4)} VA`, evalue, y);
+y += 10;
+
+
+
+doc.text("Courant circulant dans la boucle de filerie :", xLabel, y);
+y += 7;
+doc.text("If", yvalue, y);
+doc.text("= Puissance relais / Tension secondaire assignée", evalue,y);
+y += 7;
+doc.text("= Srelais / Usr", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Srelais} / ${Usr.toFixed(4)} `, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${If.toFixed(4)} A`, evalue, y);
+y += 10;
+
+
+
+
+
+doc.text("Resistance de la boucle de filerie :", xLabel, y);
+y += 7;
+doc.text("Rf", yvalue, y);
+doc.text("= Résistivité de cuivre * [(2 * Distance entre TT et relais) / Section du câble ]", evalue,y);
+y += 7;
+doc.text("= rho * [(2 * l) / S ]", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${ro}  * [(2 * ${L_m} ) / ${S_m2} ] `, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Rf.toFixed(4)} Ohm`, evalue, y);
+y += 10;
+
+
+
+doc.text("La puissance dissipée dans la filerie de liaison entre TT et les relais :", xLabel, y);
+y += 7;
+doc.text("Sdis ", yvalue, y);
+doc.text("= Resistance de la boucle de filerie * (Courant circulant dans la boucle de filerie )^2", evalue,y);
+y += 7;
+doc.text("= Rf * If^2 ", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Rf.toFixed(4)} * ${If.toFixed(4)}^2`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Sdis.toFixed(4)} VA`, evalue, y);
+y += 10;
+
+const text = `
+
+
+`;
+writeTextAuto(text);
+
+doc.text(" La puissance de précision :", xLabel, y);
+y += 7;
+doc.text("Sg ", yvalue, y);
+doc.text("= La puissance dissipée dans la filerie de liaison entre TT et les relais + Puissance du relais", evalue,y);
+y += 7;
+doc.text("= Sdis * Srelais ", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Sdis.toFixed(4)} + ${Srelais}`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`= ${Sg.toFixed(4)} VA`, evalue, y);
+y += 10;
+
+
+
+doc.text("Chute de tension dans la filerie :", xLabel, y);
+y += 7;
+doc.text("Delt(u)", yvalue, y);
+doc.text("= Resistance de la boucle de filerie * Courant circulant dans la boucle de filerie", evalue,y);
+y += 7;
+doc.text("= Rf * If", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ${Rf.toFixed(4)} * ${If.toFixed(4)}`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${Δu.toFixed(4)} V`, evalue, y);
+y += 10;
+
+
+doc.text("Erreur due à la filerie :", xLabel, y);
+y += 7;
+doc.text("epsi(f)", yvalue, y);
+doc.text("= (Chute de tension dans la filerie / Tension secondaire assignée) * 100", evalue,y);
+y += 7;
+doc.text("= (Delt(u) / Usr) * 100", evalue,y);
+y += 7;
+doc.text("", xLabel, y);
+doc.text(`= ( ${Δu.toFixed(4)} / ${Usr.toFixed(4)} )* 100`, evalue, y);
+y += 7;
+doc.text("", xLabel, y); // rien à gauche
+doc.text(`=  ${εf.toFixed(4)}`, evalue, y);
+y += 10;
+
+
+*/
+
+    doc.save("NDC_TC.pdf");
+}
+
+
+    </script>
+</body>
+</html>

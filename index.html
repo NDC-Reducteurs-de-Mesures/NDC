@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>NDC_Réducteur de mesure</title>
+
+</head>
+<body>
+    <header>
+        <a href="#"><img src="img/logo_0fae1bd2.svg" id="logo"></a>
+        <nav class="navigation">
+            <a href="travechoix.html">Start</a>
+            <a href="apropos.html">Apropos</a>
+        </nav>
+    </header>
+    <div id="head">
+        <h1 id="titre">Note de Calcul des <br>Réducteurs de Mesure</h1>
+        <p class="bienvenue">Bienvenue! Cliquer sur Start pour commencer</p>
+    </div>
+    <script>
+        const wrapper = document.querySelector('.wrapper')
+        const loginLink = document.querySelector('.login-link')
+        const registerLink = document.querySelector('.register-link')
+        registerLink.addEventListener('click',()=>{
+            wrapper.classList.add('active')
+        })
+        loginLink.addEventListener('click',()=>{
+            wrapper.classList.remove('active')
+        })   
+    </script>
+</body>
+</html>

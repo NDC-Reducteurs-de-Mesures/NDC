@@ -1,0 +1,204 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Montserrat", sans-serif;
+}
+a{
+    text-decoration: none;
+    color: #000;
+}
+a:visited{
+    text-decoration: none;
+    color: #000;
+}
+
+#head {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background: #fff;
+    background-size: cover;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center vertically */
+    align-items: flex-start; /* Align to the left */
+    padding-left: 50px; /* Adjust left spacing */
+    background-color: #222;
+    height: 80px;
+    padding: 20px;
+}
+#titre {
+    color: #000;
+    font-size: 2em;
+    font-weight: bold;
+    margin-top: 250px;
+    margin-left: 50px;
+    margin-bottom: 10px; /* Space between title and paragraph */
+}
+header{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 20px 100px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 99;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+    background-color: #fff;
+  }
+  #logo{
+    width: 10em;
+  }
+
+  /* Responsive: 2 colonnes en tablette */
+@media (max-width: 768px) {
+    form {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 20px;
+    }
+
+    form .button-row {
+        grid-column: span 2;
+    }
+
+}
+
+/* Responsive: 1 colonne en mobile */
+@media (max-width: 480px) {
+    form {
+        grid-template-columns: 1fr;
+        padding: 15px;
+    }
+
+    form .button-row {
+        grid-column: span 1;
+        flex-direction: column;
+    }
+
+    form button {
+        width: 100%;
+    }
+}
+
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 200px;
+    height: 100%; /* Permet à la zone de prendre toute la hauteur disponible */
+    justify-content: center; /* Centre les boutons verticalement */
+    flex-wrap: wrap; 
+}
+
+.row1 {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0px;
+    flex-wrap: wrap;
+}
+
+.row1 button {
+    margin: 20px;
+}
+
+.row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+}
+
+.row button {
+    margin: 20px;
+}
+
+.depart-popup{
+    width: 400px; /*la largeur du carrée*/
+    height: 80px; /*la hauteur du carrée*/
+    background: #4E95D9; /*bachground du carrée*/
+    border: 2px solid #4E95D9;/* bordure du carré*/
+    outline: none; /*le contour du carré*/
+    border-radius: 20px;/*Arrondit les coins du carré*/
+    cursor: pointer; /*Change le curseur de la souris en main quand on passe dessus*/
+    font-size: 1.5em;/*la taille du texte*/
+    color: #000;/*couleur du texte*/
+    font-weight: 550; /*Rend le texte semi-gras*/
+
+    transition: .5s;/*Ajoute un effet de transition fluide de 0,5 seconde*/
+    margin-top: 0px;
+    margin-bottom: 10px;/*ajoute un espace de 10 pixels en dessous de l’élément*/
+}
+
+.couplage-popup{
+    width: 400px; /*la largeur du carrée*/
+    height: 80px; /*la hauteur du carrée*/
+    background: #4E95D9; /*bachground du carrée*/
+    border: 2px solid #4E95D9;/* bordure du carré*/
+    outline: none; /*le contour du carré*/
+    border-radius: 20px;/*Arrondit les coins du carré*/
+    cursor: pointer; /*Change le curseur de la souris en main quand on passe dessus*/
+    font-size: 1.5em;/*la taille du texte*/
+    color: #000;/*couleur du texte*/
+    font-weight: 550; /*Rend le texte semi-gras*/
+
+    transition: .5s;/*Ajoute un effet de transition fluide de 0,5 seconde*/
+
+    margin-bottom: 5px;/*ajoute un espace de 10 pixels en dessous de l’élément*/
+}
+
+.arrivee-popup{
+    width: 400px; /*la largeur du carrée*/
+    height: 80px; /*la hauteur du carrée*/
+    background: #4E95D9; /*bachground du carrée*/
+    border: 2px solid #4E95D9;/* bordure du carré*/
+    outline: none; /*le contour du carré*/
+    border-radius: 20px;/*Arrondit les coins du carré*/
+    cursor: pointer; /*Change le curseur de la souris en main quand on passe dessus*/
+    font-size: 1.5em;/*la taille du texte*/
+    color: #000;/*couleur du texte*/
+    font-weight: 550; /*Rend le texte semi-gras*/
+
+    transition: .5s;/*Ajoute un effet de transition fluide de 0,5 seconde*/
+
+    margin-bottom: 5px;/*ajoute un espace de 10 pixels en dessous de l’élément*/
+}
+
+.ligne-popup{
+    width: 400px; /*la largeur du carrée*/
+    height: 80px; /*la hauteur du carrée*/
+    background: #4E95D9; /*bachground du carrée*/
+    border: 2px solid #4E95D9;/* bordure du carré*/
+    outline: none; /*le contour du carré*/
+    border-radius: 20px;/*Arrondit les coins du carré*/
+    cursor: pointer; /*Change le curseur de la souris en main quand on passe dessus*/
+    font-size: 1.5em;/*la taille du texte*/
+    color: #000;/*couleur du texte*/
+    font-weight: 550; /*Rend le texte semi-gras*/
+
+    transition: .5s;/*Ajoute un effet de transition fluide de 0,5 seconde*/
+
+    margin-bottom: 5px;/*ajoute un espace de 10 pixels en dessous de l’élément*/
+}
+
+.barre-popup{
+    width: 400px; /*la largeur du carrée*/
+    height: 80px; /*la hauteur du carrée*/
+    background: #4E95D9; /*bachground du carrée*/
+    border: 2px solid #4E95D9;/* bordure du carré*/
+    outline: none; /*le contour du carré*/
+    border-radius: 20px;/*Arrondit les coins du carré*/
+    cursor: pointer; /*Change le curseur de la souris en main quand on passe dessus*/
+    font-size: 1.5em;/*la taille du texte*/
+    color: #000;/*couleur du texte*/
+    font-weight: 550; /*Rend le texte semi-gras*/
+
+    transition: .5s;/*Ajoute un effet de transition fluide de 0,5 seconde*/
+
+    margin-bottom: 5px;/*ajoute un espace de 10 pixels en dessous de l’élément*/
+}
+
+
+
